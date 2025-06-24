@@ -61,6 +61,7 @@
 <body>
     <div class="header">
         <h1>🌍 Team Bingo 🌍</h1>
+        <h2 id="theme-display" style="color: #666; margin: 10px 0; font-weight: normal;">Loading theme...</h2>
         <p>Click on boxes that apply to you and share your stories with the team!</p>
     </div>
     
@@ -72,10 +73,35 @@
     </div>
 
     <script>
-        // Load bingo data from JSON file
-        fetch('bingo-data.json')
+        // Get URL parameter to determine which bingo data to load
+        function getBingoDataFile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameId = urlParams.get('game') || window.location.pathname.split('/').pop();
+            
+            // Handle different URL formats: ?game=1, ?game=2, /1, /2, etc.
+            if (gameId && gameId.match(/^\d+$/)) {
+                return `bingo-data-${gameId}.json`;
+            }
+            
+            // Default to game 1
+            return 'bingo-data-1.json';
+        }
+
+        // Load bingo data from appropriate JSON file
+        fetch(getBingoDataFile())
+            .then(response => {
+                if (!response.ok) {
+                    // If specific file not found, fall back to game 1
+                    return fetch('bingo-data-1.json');
+                }
+                return response;
+            })
             .then(response => response.json())
             .then(data => {
+                // Display theme
+                const themeDisplay = document.getElementById('theme-display');
+                themeDisplay.innerHTML = `This round's theme: <span style="color: #007bff;">${data.theme || 'Mixed'}</span>`;
+                
                 // Create bingo grid
                 const bingoCard = document.getElementById('bingoCard');
                 data.bingoItems.forEach((item, index) => {
@@ -92,6 +118,7 @@
                 document.querySelectorAll('.bingo-cell').forEach(cell => {
                     cell.addEventListener('click', function() {
                         this.classList.toggle('marked');
+                        handleCellClick();
                     });
                 });
             })
@@ -161,10 +188,22 @@
             playNote(1047, now + 0.45, 0.4); // High C
         }
 
-        document.addEventListener('click', function() {
+        // Check for bingo only on cell clicks, not document clicks
+        function handleCellClick() {
             if (checkBingo()) {
                 playWinSound();
                 setTimeout(() => alert('🎉 BINGO! Team connection level: Expert! 🎉'), 100);
+            }
+        }
+
+        // Add keyboard navigation for switching themes
+        document.addEventListener('keydown', function(event) {
+            // Check if pressed key is a number (1, 2, 3)
+            if (event.key >= '1' && event.key <= '3') {
+                const gameNumber = event.key;
+                const currentUrl = new URL(window.location);
+                currentUrl.searchParams.set('game', gameNumber);
+                window.location.href = currentUrl.toString();
             }
         });
     </script>
