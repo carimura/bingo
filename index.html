@@ -7,9 +7,9 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 960px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 24px;
             background-color: #f0f0f0;
         }
         .bingo-card {
@@ -23,11 +23,11 @@
         }
         .bingo-cell {
             background-color: white;
-            padding: 12px;
+            padding: 14px;
             text-align: center;
-            font-size: 14px;
+            font-size: 17px;
             font-weight: bold;
-            min-height: 90px;
+            min-height: 108px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -51,9 +51,9 @@
         }
         @media (max-width: 600px) {
             .bingo-cell {
-                font-size: 12px;
-                padding: 6px;
-                min-height: 70px;
+                font-size: 14px;
+                padding: 7px;
+                min-height: 84px;
             }
         }
     </style>
@@ -62,7 +62,7 @@
     <div class="header">
         <h1>🌍 Team Bingo 🌍</h1>
         <h2 id="theme-display" style="color: #666; margin: 10px 0; font-weight: normal;">Loading theme...</h2>
-        <p>Click on boxes that apply to you and share your stories with the team!</p>
+        <p>Click on boxes that apply to you!</p>
     </div>
     
     <div class="bingo-card" id="bingoCard">
@@ -106,7 +106,7 @@
                 
                 // Display theme
                 const themeDisplay = document.getElementById('theme-display');
-                themeDisplay.innerHTML = `This round's theme: <span style="color: #007bff;">${data.theme || 'Mixed'}</span>`;
+                themeDisplay.innerHTML = `Theme: <span style="color: #007bff;">${data.theme || 'Mixed'}</span>`;
                 
                 // Create bingo grid
                 const bingoCard = document.getElementById('bingoCard');
@@ -120,7 +120,7 @@
                     // Style numbers based on toggle state
                     let styledItem = item;
                     if (showNumbers) {
-                        styledItem = item.replace(/^(\d+\.\s)/, '<span style="font-size: 10px; color: #999; font-weight: normal;">$1</span>');
+                        styledItem = item.replace(/^(\d+\.\s)/, '<span style="font-size: 12px; color: #999; font-weight: normal;">$1</span>');
                     } else {
                         styledItem = item.replace(/^\d+\.\s/, ''); // Remove numbers
                     }
@@ -221,7 +221,7 @@
                     const item = currentData.bingoItems[index];
                     let styledItem = item;
                     if (showNumbers) {
-                        styledItem = item.replace(/^(\d+\.\s)/, '<span style="font-size: 10px; color: #999; font-weight: normal;">$1</span>');
+                        styledItem = item.replace(/^(\d+\.\s)/, '<span style="font-size: 12px; color: #999; font-weight: normal;">$1</span>');
                     } else {
                         styledItem = item.replace(/^\d+\.\s/, ''); // Remove numbers
                     }
