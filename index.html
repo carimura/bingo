@@ -69,10 +69,13 @@
     </div>
     
     <div style="text-align: center; margin-top: 20px;">
-        <button onclick="clearAllBoxes()" style="padding: 10px 20px; font-size: 16px; background-color: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;">Clear All Boxes</button>
+        <button onclick="clearAllBoxes()" style="padding: 10px 20px; font-size: 16px; background-color: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Clear All Boxes</button>
     </div>
 
     <script>
+        // Global state for number display
+        let showNumbers = false;
+
         // Get URL parameter to determine which bingo data to load
         function getBingoDataFile() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -98,6 +101,9 @@
             })
             .then(response => response.json())
             .then(data => {
+                // Store data globally for number toggle
+                window.currentBingoData = data;
+                
                 // Display theme
                 const themeDisplay = document.getElementById('theme-display');
                 themeDisplay.innerHTML = `This round's theme: <span style="color: #007bff;">${data.theme || 'Mixed'}</span>`;
@@ -111,7 +117,14 @@
                     if (index === 12) { // Free space
                         cell.className += ' free-space';
                     }
-                    cell.innerHTML = item;
+                    // Style numbers based on toggle state
+                    let styledItem = item;
+                    if (showNumbers) {
+                        styledItem = item.replace(/^(\d+\.\s)/, '<span style="font-size: 10px; color: #999; font-weight: normal;">$1</span>');
+                    } else {
+                        styledItem = item.replace(/^\d+\.\s/, ''); // Remove numbers
+                    }
+                    cell.innerHTML = styledItem;
                     bingoCard.appendChild(cell);
                 });
                 
@@ -197,7 +210,27 @@
             }
         }
 
-        // Add keyboard navigation for switching themes
+        // Toggle number display
+        function toggleNumbers() {
+            showNumbers = !showNumbers;
+            // Re-render all cells with new number state
+            const cells = document.querySelectorAll('.bingo-cell');
+            cells.forEach((cell, index) => {
+                const currentData = window.currentBingoData; // Store data globally
+                if (currentData && currentData.bingoItems[index]) {
+                    const item = currentData.bingoItems[index];
+                    let styledItem = item;
+                    if (showNumbers) {
+                        styledItem = item.replace(/^(\d+\.\s)/, '<span style="font-size: 10px; color: #999; font-weight: normal;">$1</span>');
+                    } else {
+                        styledItem = item.replace(/^\d+\.\s/, ''); // Remove numbers
+                    }
+                    cell.innerHTML = styledItem;
+                }
+            });
+        }
+
+        // Add keyboard navigation for switching themes and toggling numbers
         document.addEventListener('keydown', function(event) {
             // Check if pressed key is a number (1, 2, 3, 4, 5)
             if (event.key >= '1' && event.key <= '5') {
@@ -205,6 +238,10 @@
                 const currentUrl = new URL(window.location);
                 currentUrl.searchParams.set('game', gameNumber);
                 window.location.href = currentUrl.toString();
+            }
+            // Toggle numbers with 'n' key
+            else if (event.key.toLowerCase() === 'n') {
+                toggleNumbers();
             }
         });
     </script>
