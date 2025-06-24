@@ -104,6 +104,7 @@
                 
                 // Create bingo grid
                 const bingoCard = document.getElementById('bingoCard');
+                bingoCard.innerHTML = ''; // Clear existing content
                 data.bingoItems.forEach((item, index) => {
                     const cell = document.createElement('div');
                     cell.className = 'bingo-cell';
@@ -198,8 +199,8 @@
 
         // Add keyboard navigation for switching themes
         document.addEventListener('keydown', function(event) {
-            // Check if pressed key is a number (1, 2, 3)
-            if (event.key >= '1' && event.key <= '3') {
+            // Check if pressed key is a number (1, 2, 3, 4, 5)
+            if (event.key >= '1' && event.key <= '5') {
                 const gameNumber = event.key;
                 const currentUrl = new URL(window.location);
                 currentUrl.searchParams.set('game', gameNumber);
